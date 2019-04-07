@@ -4,6 +4,13 @@ public class Zoznam {
     private int id;
     private String name;
 
+    public Zoznam() {
+    }
+
+    public Zoznam(String name) {
+        this.name = name;
+    }
+
     public Zoznam(int id, String name) {
         this.id = id;
         this.name = name;

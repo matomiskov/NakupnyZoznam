@@ -8,6 +8,7 @@ import android.support.design.internal.NavigationMenu;
 import android.support.design.internal.NavigationSubMenu;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,7 +25,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-        DatabaseHelper db;
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,22 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         db = new DatabaseHelper(this);
-        db.addZoznam("moj zoznam");
+
+        //NA TESTY
+        Zoznam zoznam1 = new Zoznam("Nakupovanie");
+        Zoznam zoznam2 = new Zoznam("Sporenie");
+
+        long tag1_id = db.createZoznam(zoznam1);
+        long tag2_id = db.createZoznam(zoznam2);
+//jeden zoznam
+        Zoznam zoznamOne = db.getZoznam(tag1_id);
+        System.out.println("ID zoznamu " + zoznamOne.getId());
+        // System.out.println("::: POZOR :::" + db.getZoznam(tag1_id).getName());
+//vsetky zoznamy
+        List<Zoznam> allToDos = db.getAllZoznamy();
+        for (Zoznam zoznam : allToDos) {
+            Log.d("ToDo", zoznam.getName());
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
-        menu.add(R.id.group_item,Menu.NONE,Menu.FIRST,"Môj nákup").setIcon(R.drawable.ic_list);
+        menu.add(R.id.group_item, Menu.NONE, Menu.FIRST, "Môj nákup").setIcon(R.drawable.ic_list);
         listOfList.add("Môj nákup"); //PRIDA DO ZOZNAMU NAKUPNYZOZNAM
     }
 
@@ -90,25 +106,28 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-List<String>listOfList=new ArrayList<>(); //ZOZNAM NAKUPNYCHZOZNAOV
+
+    List<String> listOfList = new ArrayList<>(); //ZOZNAM NAKUPNYCHZOZNAOV
     int pocitadlo = 0; //DOCASNE POCITADLO
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        String nazov ="Nove "+pocitadlo;
+        String nazov = "Nove " + pocitadlo;
 
         int itemId = item.getItemId();
 
-        if(itemId==R.id.create_list){
+        if (itemId == R.id.create_list) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             Menu menu = navigationView.getMenu();
-            menu.add(R.id.group_item,pocitadlo,Menu.FIRST,nazov).setIcon(R.drawable.ic_list);
+            menu.add(R.id.group_item, pocitadlo, Menu.FIRST, nazov).setIcon(R.drawable.ic_list);
             listOfList.add(nazov);
             pocitadlo++;
             System.out.println(item.getTitle());
+        } else if (itemId != R.id.create_list) {
+            okno(item);
         }
-else if(itemId!=R.id.create_list){okno(item);}
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -116,7 +135,7 @@ else if(itemId!=R.id.create_list){okno(item);}
     }
 
     public void okno(MenuItem menuItem) {
-       final MenuItem item = menuItem;
+        final MenuItem item = menuItem;
         System.out.println(item.getTitle());
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
         dialog.setCancelable(false);
@@ -127,7 +146,8 @@ else if(itemId!=R.id.create_list){okno(item);}
                 NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
                 Menu menu = navigationView.getMenu();
                 menu.removeItem(item.getItemId());
-listOfList.remove(item);            }
+                listOfList.remove(item);
+            }
         }).setNegativeButton("Nie", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

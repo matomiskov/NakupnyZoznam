@@ -8,8 +8,7 @@ public class Polozka {
     private String photo;
     private int zoznamId;
 
-    public Polozka(int id, String name, String poznamka, int category, String photo, int zoznamId) {
-        this.id = id;
+    public Polozka(String name, String poznamka, int category, String photo, int zoznamId) {
         this.name = name;
         this.poznamka = poznamka;
         this.category = category;
